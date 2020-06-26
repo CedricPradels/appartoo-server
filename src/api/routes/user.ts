@@ -60,4 +60,30 @@ route.put("/:id", async (req, res, next) => {
   }
 });
 
+route.delete("/friend/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const token = await TokenServices.check(req.headers.authorization || "");
+
+    const user = await UserServices.friend.delete(token, id);
+    res.status(200).json({ user });
+  } catch (err) {
+    next(err);
+  }
+});
+
+route.post("/friend/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const token = await TokenServices.check(req.headers.authorization || "");
+
+    const user = await UserServices.friend.add(token, id);
+    res.status(200).json({ user });
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default route;

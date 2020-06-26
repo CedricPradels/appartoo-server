@@ -1,6 +1,7 @@
 import UserModel from "../models/User";
 import CustomError from "./customError";
 import authentication from "./authentication";
+import { query } from "express";
 
 interface ICreateUser {
   username: string;
@@ -116,8 +117,6 @@ const UserServices = {
       if (!!!queryToken || !!!queryId)
         throw new CustomError(400, "User does not exist");
 
-      console.log("id ", queryId);
-      console.log("token ", queryToken);
       if (queryToken._id.toString() !== queryId._id.toString())
         throw new CustomError(401, "Unauthorized");
 
@@ -130,12 +129,72 @@ const UserServices = {
 
       const updatedUser = await UserModel.findByIdAndUpdate(id, update, {
         new: true,
-      });
+      }).select("-salt -hash -token");
 
       return updatedUser;
     } catch (err) {
       throw err;
     }
+  },
+
+  friend: {
+    async delete(token: string, id: string) {
+      try {
+        const queryToken = await UserModel.findOne({ token });
+        if (!!!queryToken) throw new CustomError(400, "User does not exist");
+
+        if (!!!queryToken.friends || queryToken.friends.length === 0)
+          throw new CustomError(400, "No friend to delete");
+
+        if (!queryToken.friends.some((x) => x.toString() === id))
+          throw new CustomError(400, "This user is not in your friends list");
+
+        const friends = queryToken.friends.filter(
+          (friendId) => friendId.toString() !== id
+        );
+
+        const updatedUser = await UserModel.findByIdAndUpdate(
+          queryToken._id.toString(),
+          { friends },
+          {
+            new: true,
+          }
+        ).select("-salt -hash -token");
+
+        return updatedUser;
+      } catch (err) {
+        throw err;
+      }
+    },
+
+    async add(token: string, id: string) {
+      try {
+        const queryToken = await UserModel.findOne({ token });
+        if (!!!queryToken) throw new CustomError(400, "User does not exist");
+
+        const friends = queryToken.friends
+          ? [
+              ...queryToken.friends.filter(
+                (friend) => friend.toString() !== id
+              ),
+              id,
+            ]
+          : [id];
+
+        const updatedUser = await UserModel.findByIdAndUpdate(
+          queryToken._id.toString(),
+          { friends },
+          {
+            new: true,
+          }
+        ).select("-salt -hash -token");
+
+        console.log(updatedUser);
+        return updatedUser;
+      } catch (err) {
+        throw err;
+      }
+    },
   },
 };
 
