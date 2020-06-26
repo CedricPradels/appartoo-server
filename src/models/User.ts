@@ -5,11 +5,11 @@ interface IUser extends Document {
   salt: string;
   token: string;
   hash: string;
-  friends: string[];
-  age: number;
-  race: string;
-  family: string;
-  food: string;
+  friends?: string[];
+  age?: number;
+  race?: string;
+  family?: string;
+  food?: string;
 }
 
 const userSchema = new mongoose.Schema({
