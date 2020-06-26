@@ -41,4 +41,23 @@ route.get("/:id", async (req, res, next) => {
   }
 });
 
+route.put("/:id", async (req, res, next) => {
+  try {
+    const { race, age, family, food } = req.body;
+
+    const id = req.params.id;
+
+    const token = await TokenServices.check(req.headers.authorization || "");
+
+    const user = await UserServices.update(
+      { token, id },
+      { race, age, family, food }
+    );
+
+    res.status(200).json({ user });
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default route;

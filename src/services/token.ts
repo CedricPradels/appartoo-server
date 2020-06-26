@@ -13,6 +13,7 @@ const token = {
     try {
       const queryToken = await UserModel.findOne({ token });
       if (!!!queryToken) throw WrongToken;
+      return token;
     } catch (err) {
       throw err;
     }

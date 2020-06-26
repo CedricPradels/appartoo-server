@@ -12,6 +12,18 @@ interface ICheckUser {
   password: string;
 }
 
+interface IUpdateUserData {
+  race: string;
+  age: number;
+  family: string;
+  food: string;
+}
+
+interface IUpdateUserAuth {
+  id: string;
+  token: string;
+}
+
 const UserServices = {
   async create({ username, password }: ICreateUser) {
     try {
@@ -87,6 +99,40 @@ const UserServices = {
       if (!!!queryId) throw UserDoesNotExist;
 
       return queryId;
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  async update(
+    { token, id }: IUpdateUserAuth,
+    { race, age, family, food }: IUpdateUserData
+  ) {
+    if (!!!race && !!!age && !!!family && !!!food)
+      throw new CustomError(400, "Nothing to update");
+    try {
+      const queryToken = await UserModel.findOne({ token });
+      const queryId = await UserModel.findById(id);
+      if (!!!queryToken || !!!queryId)
+        throw new CustomError(400, "User does not exist");
+
+      console.log("id ", queryId);
+      console.log("token ", queryToken);
+      if (queryToken._id.toString() !== queryId._id.toString())
+        throw new CustomError(401, "Unauthorized");
+
+      const update = {
+        race: race || queryId.race,
+        age: age || queryId.age,
+        family: family || queryId.family,
+        food: food || queryId.food,
+      };
+
+      const updatedUser = await UserModel.findByIdAndUpdate(id, update, {
+        new: true,
+      });
+
+      return updatedUser;
     } catch (err) {
       throw err;
     }
