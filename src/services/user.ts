@@ -169,6 +169,9 @@ const UserServices = {
 
     async add(token: string, id: string) {
       try {
+        const queryFriend = await UserModel.findById(id);
+        if (!!!queryFriend) throw new CustomError(400, "Invalid friend Id");
+
         const queryToken = await UserModel.findOne({ token });
         if (!!!queryToken) throw new CustomError(400, "User does not exist");
 
@@ -189,8 +192,29 @@ const UserServices = {
           }
         ).select("-salt -hash -token");
 
-        console.log(updatedUser);
         return updatedUser;
+      } catch (err) {
+        throw err;
+      }
+    },
+  },
+  friends: {
+    async read(token: string) {
+      try {
+        const queryToken = await UserModel.findOne({ token }).populate({
+          path: "friends",
+          select: "-token -salt -hash",
+          populate: {
+            path: "friends",
+            select: "username",
+          },
+        });
+
+        if (!!!queryToken) throw new CustomError(400, "User not found");
+
+        const friends = queryToken.friends || [];
+
+        return friends;
       } catch (err) {
         throw err;
       }

@@ -29,6 +29,44 @@ route.post("/login", async (req, res, next) => {
   }
 });
 
+route.delete("/friend/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const token = await TokenServices.check(req.headers.authorization || "");
+
+    const user = await UserServices.friend.delete(token, id);
+    res.status(200).json({ user });
+  } catch (err) {
+    next(err);
+  }
+});
+
+route.post("/friend/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const token = await TokenServices.check(req.headers.authorization || "");
+
+    const user = await UserServices.friend.add(token, id);
+    res.status(200).json({ user });
+  } catch (err) {
+    next(err);
+  }
+});
+
+route.get("/friends", async (req, res, next) => {
+  try {
+    const token = await TokenServices.check(req.headers.authorization || "");
+
+    const friends = await UserServices.friends.read(token);
+
+    res.status(200).json({ friends });
+  } catch (err) {
+    next(err);
+  }
+});
+
 route.get("/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -54,32 +92,6 @@ route.put("/:id", async (req, res, next) => {
       { race, age, family, food }
     );
 
-    res.status(200).json({ user });
-  } catch (err) {
-    next(err);
-  }
-});
-
-route.delete("/friend/:id", async (req, res, next) => {
-  try {
-    const { id } = req.params;
-
-    const token = await TokenServices.check(req.headers.authorization || "");
-
-    const user = await UserServices.friend.delete(token, id);
-    res.status(200).json({ user });
-  } catch (err) {
-    next(err);
-  }
-});
-
-route.post("/friend/:id", async (req, res, next) => {
-  try {
-    const { id } = req.params;
-
-    const token = await TokenServices.check(req.headers.authorization || "");
-
-    const user = await UserServices.friend.add(token, id);
     res.status(200).json({ user });
   } catch (err) {
     next(err);
