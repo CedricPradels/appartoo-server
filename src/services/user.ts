@@ -75,6 +75,22 @@ const UserServices = {
       throw err;
     }
   },
+
+  async read(id: string) {
+    const UserDoesNotExist = new CustomError(400, "User does not exist");
+
+    try {
+      const queryId = await UserModel.findById(id)
+        .select("-hash -token -salt")
+        .populate("freinds");
+
+      if (!!!queryId) throw UserDoesNotExist;
+
+      return queryId;
+    } catch (err) {
+      throw err;
+    }
+  },
 };
 
 export default UserServices;
