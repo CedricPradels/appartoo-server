@@ -8,6 +8,12 @@ interface ICreateHash {
   salt: string;
 }
 
+interface ICheckPassword {
+  password: string;
+  salt: string;
+  hash: string;
+}
+
 const createHash = ({ password, salt }: ICreateHash) =>
   SHA256(salt + password).toString(encBase64);
 
@@ -22,6 +28,9 @@ const authentication = {
     } while (!!queryToken);
     const hash = createHash({ salt, password });
     return { token, hash, salt };
+  },
+  check({ password, salt, hash }: ICheckPassword) {
+    return createHash({ salt, password }) === hash;
   },
 };
 
