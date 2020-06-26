@@ -82,7 +82,7 @@ const UserServices = {
     try {
       const queryId = await UserModel.findById(id)
         .select("-hash -token -salt")
-        .populate("freinds");
+        .populate("friends");
 
       if (!!!queryId) throw UserDoesNotExist;
 
