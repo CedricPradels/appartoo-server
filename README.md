@@ -7,6 +7,14 @@ Test for work.
 - [Documentation](https://appartoo-pangolin.herokuapp.com/api/doc/)
 - [Api](https://appartoo-pangolin.herokuapp.com)
 
+## Technologies
+
+- Mongoose
+- Express
+- Node
+- Typescript
+- Swagger / open api
+
 ## How to use
 
 ```bash

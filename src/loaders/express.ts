@@ -14,7 +14,7 @@ const initExpress = () => {
   app.use(api);
 
   app.all("*", (req, res, next) => {
-    throw new CustomError(404, "Page not found");
+    throw new CustomError(404, "Welcome to Appartoo Pangolin server !");
   });
 
   const finalHandle: ErrorRequestHandler = (err, req, res, next) => {
