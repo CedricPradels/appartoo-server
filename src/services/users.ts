@@ -6,7 +6,7 @@ const UsersServices = {
     try {
       const queryId = await UserModel.find()
         .select("-hash -token -salt")
-        .populate("friends");
+        .populate({ path: "friends", select: "-hash -token -salt" });
 
       return queryId;
     } catch (err) {
