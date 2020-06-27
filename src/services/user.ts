@@ -159,7 +159,7 @@ const UserServices = {
           {
             new: true,
           }
-        ).select("-salt -hash -token");
+        ).select("username _id");
 
         return updatedUser;
       } catch (err) {
